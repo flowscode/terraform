@@ -20,6 +20,7 @@ resource "aws_instance" "my_server" {
   count         = 2
 
   tags = {
-    Name = "MyServer_(${var.test_dev[count.index]})"
+    # Name = "MyServer-(${var.test_dev[count.index]})"
+    Name = "MyServer-${local.environments[count.index]}"
   }
 }
