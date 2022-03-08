@@ -8,3 +8,7 @@ variable "aws_sk" {
 variable "test_dev" {
   type = list(string)
 }
+
+variable "instance_type" {
+  type = string
+}
