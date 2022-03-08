@@ -4,3 +4,7 @@ variable "aws_ak" {
 variable "aws_sk" {
   type = string
 }
+
+variable "test_dev" {
+  type = list(string)
+}
