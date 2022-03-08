@@ -1,3 +1,0 @@
-locals {
-  environments = ["TEST", "DEV"]
-}
