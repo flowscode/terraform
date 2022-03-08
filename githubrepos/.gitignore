@@ -1,0 +1,7 @@
+/variables.tf
+/terraform.tfvars
+/.git
+/.terraform.lock.hcl
+/.terraform
+/terraform.tfstate
+/terraform.tfstate.backup
