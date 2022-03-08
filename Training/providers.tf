@@ -1,4 +1,14 @@
 terraform {
+
+
+  cloud {
+    organization = "flowscode"
+
+    workspaces {
+      name = "getting-started"
+    }
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -7,9 +17,9 @@ terraform {
   }
 }
 
-provider "aws" {
-  profile = "default"
-  # region = "us-east-1"
-  # access_key = var.aws_ak
-  # secret_key = var.aws_sk
-}
+# provider "aws" {
+#   profile = "default"
+#   # region = "us-east-1"
+#   # access_key = var.aws_ak
+#   # secret_key = var.aws_sk
+# }
