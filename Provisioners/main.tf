@@ -73,16 +73,37 @@ resource "aws_key_pair" "deployer" {
 
 
 resource "aws_instance" "my_server" {
+  count                  = 3
   ami                    = "ami-0e1d30f2c40c4c701"
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.sg_my_server.id]
-  user_data              = templatefile("./userdata.yaml",{})
-  tags = {
-    Name = "MyServer"
+  user_data              = templatefile("./userdata.yaml", {})
+
+  provisioner "remote-exec" {
+    inline = ["echo ${self.private_ip} >> /home/ec2-user/private_ips.txt"]
+
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = templatefile(var.ssh_path, {})
+      host        = self.public_ip
+    }
+
   }
+
+  tags = {
+    Name = "MyServer_${count.index}"
+  }
+
 }
 
-output "my_server-public_ip" {
-  value = aws_instance.my_server.public_ip
+output "my_server-public_ip_0" {
+  value = aws_instance.my_server[0].public_ip
+}
+output "my_server-public_ip_1" {
+  value = aws_instance.my_server[1].public_ip
+}
+output "my_server-public_ip_2" {
+  value = aws_instance.my_server[2].public_ip
 }
