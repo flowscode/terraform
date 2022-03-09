@@ -74,7 +74,6 @@ resource "aws_key_pair" "deployer" {
 
 
 resource "aws_instance" "my_server" {
-  count                  = 3
   ami                    = "ami-0e1d30f2c40c4c701"
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.deployer.key_name
@@ -94,17 +93,20 @@ resource "aws_instance" "my_server" {
   }
 
   tags = {
-    Name = "MyServer_${count.index}"
+    Name = "MyServer"
   }
 
 }
 
+resource "null_resource" "status" {
+  provisioner "local-exec" {
+    command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.my_server.id}"
+  }
+  depends_on = [
+    aws_instance.my_server
+  ]
+}
+
 output "my_server-public_ip_0" {
-  value = aws_instance.my_server[0].public_ip
-}
-output "my_server-public_ip_1" {
-  value = aws_instance.my_server[1].public_ip
-}
-output "my_server-public_ip_2" {
-  value = aws_instance.my_server[2].public_ip
+  value = aws_instance.my_server.public_ip
 }
