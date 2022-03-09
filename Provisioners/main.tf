@@ -9,6 +9,7 @@ terraform {
   backend "local" {
     path = "./terraform.tfstate.d/provisioners/terraform.tfstate"
   }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
