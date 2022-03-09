@@ -1,9 +1,9 @@
 terraform {
-  cloud {
+  backend "remote" {
     organization = "flowscode"
 
     workspaces {
-      name = "provisioners"
+      name = "provisioners_2"
     }
   }
   required_providers {
@@ -15,6 +15,7 @@ terraform {
 }
 
 provider "aws" {
+  # profile = "default"
   region = "us-east-1"
 }
 
