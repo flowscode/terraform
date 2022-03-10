@@ -1,5 +1,5 @@
 terraform {
-  
+
   backend "local" {
     path = "./terraform.tfstate"
   }
@@ -26,6 +26,12 @@ resource "aws_instance" "my_server" {
     # Name = "MyServer-(${var.test_dev[count.index]})"
     Name = "MyServer-${local.environments[count.index]}"
   }
+}
+
+
+resource "aws_s3_bucket" "bucket" {
+  bucket = "7368368463dependson"
+  depends_on = [aws_instance.my_server]
 }
 
 output "public_ip_0" {
