@@ -61,12 +61,14 @@ resource "aws_instance" "my_server_ohio" {
     micro = "t2.micro"
     small = "t2.small"
   }
+
   instance_type = each.value
   tags = {
     # Name = "MyServer-(${var.test_dev[count.index]})"
     # Name = "MyServer-${local.environments[count.index]}"
     Name = "MyServer-${each.key}"
   }
+
 }
 
 data "aws_ami" "example-london" {
@@ -94,20 +96,29 @@ resource "aws_instance" "my_server_london" {
     micro = "t2.micro"
     small = "t2.small"
   }
+
   instance_type = each.value
   tags = {
     # Name = "MyServer-(${var.test_dev[count.index]})"
     # Name = "MyServer-${local.environments[count.index]}"
     Name = "MyServer-${each.key}"
   }
+
 }
 
 output "public_ips_ohio" {
-  value = values(aws_instance.my_server_ohio)[*].public_ip
+  value = {
+    Public_IPs = values(aws_instance.my_server_ohio)[*].public_ip,
+    Name_Tags = values(aws_instance.my_server_ohio)[*].tags["Name"]
+  }
 }
 output "public_ips_london" {
-  value = values(aws_instance.my_server_london)[*].public_ip
+  value = {
+    Public_IPs = values(aws_instance.my_server_london)[*].public_ip,
+    Name_Tags = values(aws_instance.my_server_london)[*].tags["Name"]
+  }
 }
+
 # output "public_ip_nano" {
 #   value = aws_instance.my_server["nano"].public_ip
 # }
