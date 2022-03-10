@@ -17,8 +17,43 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "my_server" {
-  ami           = "ami-0c293f3f676ec4f90"
+provider "aws" {
+  profile = "default"
+  region = "eu-west-2"
+  alias = "london"
+}
+
+provider "aws" {
+  profile = "default"
+  region = "eu-west-1"
+  alias = "ireland"
+}
+
+provider "aws" {
+  profile = "default"
+  region = "us-east-2"
+  alias = "ohio"
+}
+
+data "aws_ami" "example-ohio" {
+  most_recent      = true
+  owners           = ["amazon"]
+  provider = aws.ohio
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm*"]
+  }
+}
+
+
+resource "aws_instance" "my_server_ohio" {
+  provider = aws.ohio
+  ami           = data.aws_ami.example-ohio.id
   # instance_type = var.instance_type
   # count = 2
   for_each      = {
@@ -34,8 +69,44 @@ resource "aws_instance" "my_server" {
   }
 }
 
-output "public_ips" {
-  value = values(aws_instance.my_server)[*].public_ip
+data "aws_ami" "example-london" {
+  most_recent      = true
+  owners           = ["amazon"]
+  provider = aws.london
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm*"]
+  }
+}
+
+resource "aws_instance" "my_server_london" {
+  provider = aws.london
+  ami           = data.aws_ami.example-london.id
+  # instance_type = var.instance_type
+  # count = 2
+  for_each      = {
+    nano = "t2.nano"
+    micro = "t2.micro"
+    small = "t2.small"
+  }
+  instance_type = each.value
+  tags = {
+    # Name = "MyServer-(${var.test_dev[count.index]})"
+    # Name = "MyServer-${local.environments[count.index]}"
+    Name = "MyServer-${each.key}"
+  }
+}
+
+output "public_ips_ohio" {
+  value = values(aws_instance.my_server_ohio)[*].public_ip
+}
+output "public_ips_london" {
+  value = values(aws_instance.my_server_london)[*].public_ip
 }
 # output "public_ip_nano" {
 #   value = aws_instance.my_server["nano"].public_ip
