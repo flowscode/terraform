@@ -16,7 +16,7 @@ resource "aws_subnet" "flow-sub-public" { // creates subnet resource
   map_public_ip_on_launch = true //it makes this a public subnet
   availability_zone = local.azs[count.index] // sets the az
   tags = {
-      Name = "flow-vpc-public-${count.index + 1}" //Subnet name tag  -- count specific, + 1 just  to be cheeky ;)
+      Name = "flow-sub-public-${count.index + 1}" //Subnet name tag  -- count specific, + 1 just  to be cheeky ;)
   }
   depends_on = [aws_vpc.flow_vpc]
 }
@@ -28,7 +28,7 @@ resource "aws_subnet" "flow-sub-private" { // creates subnet resource
   map_public_ip_on_launch = false //it makes this a public subnet
   availability_zone = local.azs[count.index] // sets the az
   tags = {
-      Name = "flow-vpc-public-${count.index + 1}" //Subnet name tag  -- count specific, + 1 just  to be cheeky ;)
+      Name = "flow-sub-private-${count.index + 1}" //Subnet name tag  -- count specific, + 1 just  to be cheeky ;)
   }
   depends_on = [aws_vpc.flow_vpc]
 }
