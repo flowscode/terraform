@@ -9,47 +9,50 @@ resource "aws_vpc" "flow_vpc" { // create's VPC resource
     }
 }
 
-resource "aws_subnet" "flow-vpc-public" { // creates subnet resource
+resource "aws_subnet" "flow-sub-public" { // creates subnet resource
   count = length(local.public_cidrs) // this should create however many cidr ranges i have put in the list based on the length of the list
   vpc_id = "${aws_vpc.flow_vpc.id}" // attaches the subnet to the specified VPC
   cidr_block = local.public_cidrs[count.index] // will set each created subnet's CIDR based on what is in the list using the count to iterate throught the list
   map_public_ip_on_launch = true //it makes this a public subnet
-  availability_zone = "eu-west-2a" // sets the az
+  availability_zone = local.azs[count.index] // sets the az
   tags = {
       Name = "flow-vpc-public-${count.index + 1}" //Subnet name tag  -- count specific, + 1 just  to be cheeky ;)
   }
+  depends_on = [aws_vpc.flow_vpc]
 }
 
-resource "aws_subnet" "flow-vpc-private" { // creates subnet resource
+resource "aws_subnet" "flow-sub-private" { // creates subnet resource
   count = length(local.private_cidrs) // this should create however many cidr ranges i have put in the list based on the length of the list
   vpc_id = "${aws_vpc.flow_vpc.id}" // attaches the subnet to the specified VPC
   cidr_block = local.private_cidrs[count.index] // will set each created subnet's CIDR based on what is in the list using the count to iterate throught the list
   map_public_ip_on_launch = false //it makes this a public subnet
-  availability_zone = "eu-west-2a" // sets the az
+  availability_zone = local.azs[count.index] // sets the az
   tags = {
       Name = "flow-vpc-public-${count.index + 1}" //Subnet name tag  -- count specific, + 1 just  to be cheeky ;)
   }
+  depends_on = [aws_vpc.flow_vpc]
 }
 
 resource "aws_instance" "public_server" {
-    depends_on = [aws_subnet.flow-vpc-public]
+    depends_on = [aws_subnet.flow-sub-public]
     count = 2
-    ami = "ami-0e1d30f2c40c4c701"
+    ami = "ami-008e1e7f1fcbe9b80"
     instance_type = "t2.micro"
     # vpc_security_group_ids = [module.vpc.default_security_group_id]
     # subnet_id = module.vpc.public_subnets[count.index]
+    subnet_id = aws_subnet.flow-sub-public[count.index].id
     tags = {
       Name = "public_server_${count.index + 1}"
     }
 }
 
 resource "aws_instance" "private_server" {
-    depends_on = [aws_subnet.flow-vpc-private]
+    depends_on = [aws_subnet.flow-sub-private]
     count = 2
-    ami = "ami-0e1d30f2c40c4c701"
+    ami = "ami-008e1e7f1fcbe9b80"
     instance_type = "t2.micro"
     # vpc_security_group_ids = [module.vpc.default_security_group_id]
-    # subnet_id = module.vpc.private_subnets[count.index]
+    subnet_id = aws_subnet.flow-sub-private[count.index].id
     tags = {
       Name = "private_server_${count.index + 1}"
     }
