@@ -14,11 +14,11 @@ resource "aws_subnet" "flow-sub-public" { // creates subnet resource
   #   public_cidr_1 = var.public_cidr_1, // this should create however many cidr ranges i have put in the list based on the length of the list
   #   public_cidr_2 = var.public_cidr_2
   # }
-  count = length(local.public_cidrs)
-  cidr_block              = local.public_cidrs[count.index]            // will set each created subnet's CIDR based on what is in the list using the count to iterate throught the list
-  vpc_id                  = aws_vpc.flow_vpc.id   // attaches the subnet to the specified VPC
-  map_public_ip_on_launch = true                  // it makes this a public subnet
-  availability_zone       = local.azs[count.index] // sets the az
+  count                   = length(local.public_cidrs)
+  cidr_block              = local.public_cidrs[count.index] // will set each created subnet's CIDR based on what is in the list using the count to iterate throught the list
+  vpc_id                  = aws_vpc.flow_vpc.id             // attaches the subnet to the specified VPC
+  map_public_ip_on_launch = true                            // it makes this a public subnet
+  availability_zone       = local.azs[count.index]          // sets the az
   tags = {
     Name = "flow-sub-public-${count.index}" //Subnet name tag  -- count specific, + 1 just  to be cheeky ;)
   }

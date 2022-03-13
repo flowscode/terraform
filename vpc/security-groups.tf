@@ -9,9 +9,9 @@ resource "aws_security_group" "bastion_sg" {
     for_each = local.ingress
     content {
       description = ingress.value.description
-      from_port = ingress.value.port
-      to_port = ingress.value.port
-      protocol = ingress.value.protocol
+      from_port   = ingress.value.port
+      to_port     = ingress.value.port
+      protocol    = ingress.value.protocol
       cidr_blocks = ingress.value.cidr_blocks
     }
   }
@@ -67,9 +67,9 @@ resource "aws_security_group" "public_sg" {
     for_each = local.ingress
     content {
       description = ingress.value.description
-      from_port = ingress.value.port
-      to_port = ingress.value.port
-      protocol = ingress.value.protocol
+      from_port   = ingress.value.port
+      to_port     = ingress.value.port
+      protocol    = ingress.value.protocol
       cidr_blocks = ingress.value.cidr_blocks
     }
   }
@@ -100,9 +100,9 @@ resource "aws_security_group" "public_sg" {
 
   ingress {
     description = "bastion access"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = [data.aws_vpc.main.cidr_block]
   }
 
@@ -123,9 +123,9 @@ resource "aws_security_group" "private_sg" {
 
   ingress {
     description = "bastion access"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = [data.aws_vpc.main.cidr_block]
   }
 
