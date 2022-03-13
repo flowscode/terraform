@@ -1,39 +1,51 @@
+
+
 resource "aws_security_group" "bastion_sg" {
   name        = "bastion_sg"
   description = "Allow all TLS inbound HTTP/HTTPS"
   vpc_id      = data.aws_vpc.main.id
 
+  dynamic "ingress" {
+    for_each = local.ingress
+    content {
+      description = ingress.value.description
+      from_port = ingress.value.port
+      to_port = ingress.value.port
+      protocol = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
 
-  ingress {
-    description      = "HTTP from anywhere"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = []
-  }
-  ingress {
-    description      = "HTTPS from anywhere"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = []
-  }
-  ingress {
-    description      = "icmp from anywhere"
-    from_port        = -1
-    to_port          = -1
-    protocol         = "icmp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = []
-  }
+  # ingress {
+  #   description      = "HTTP from anywhere"
+  #   from_port        = 80
+  #   to_port          = 80
+  #   protocol         = "tcp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = []
+  # }
+  # ingress {
+  #   description      = "HTTPS from anywhere"
+  #   from_port        = 443
+  #   to_port          = 443
+  #   protocol         = "tcp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = []
+  # }
+  # ingress {
+  #   description      = "icmp from anywhere"
+  #   from_port        = -1
+  #   to_port          = -1
+  #   protocol         = "icmp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = []
+  # }
   ingress {
     description      = "SSH from me only"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["149.22.65.211/32"]
+    cidr_blocks      = ["enter-your-ip-address-here/32"]
     ipv6_cidr_blocks = []
   }
   egress {
@@ -51,39 +63,49 @@ resource "aws_security_group" "public_sg" {
   description = "Allow all TLS inbound HTTP/HTTPS"
   vpc_id      = data.aws_vpc.main.id
 
+  dynamic "ingress" {
+    for_each = local.ingress
+    content {
+      description = ingress.value.description
+      from_port = ingress.value.port
+      to_port = ingress.value.port
+      protocol = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
+  # ingress {
+  #   description      = "HTTP from anywhere"
+  #   from_port        = 80
+  #   to_port          = 80
+  #   protocol         = "tcp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = []
+  # }
+  # ingress {
+  #   description      = "HTTPS from anywhere"
+  #   from_port        = 443
+  #   to_port          = 443
+  #   protocol         = "tcp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = []
+  # }
+  # ingress {
+  #   description      = "icmp from anywhere"
+  #   from_port        = -1
+  #   to_port          = -1
+  #   protocol         = "icmp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = []
+  # }
 
   ingress {
-    description      = "HTTP from anywhere"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = []
-  }
-  ingress {
-    description      = "HTTPS from anywhere"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = []
-  }
-  ingress {
-    description      = "icmp from anywhere"
-    from_port        = -1
-    to_port          = -1
-    protocol         = "icmp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = []
-  }
-  ingress {
-    description      = "SSH from me only"
+    description = "bastion access"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["149.22.65.211/32"]
-    ipv6_cidr_blocks = []
+    cidr_blocks = [data.aws_vpc.main.cidr_block]
   }
+
   egress {
     description      = "outgoing for everyone"
     from_port        = 0
