@@ -7,6 +7,6 @@ data "aws_security_group" "default" {
   vpc_id = data.aws_vpc.main.id
 }
 
-data "external" "myipaddr" {
-  program = ["bash", "-c", "curl -s 'https://ipinfo.io/json'"]
-}
+# data "external" "myipaddr" {
+#   program = ["bash", "-c", "curl -s 'https://ipinfo.io/json'"]
+# }

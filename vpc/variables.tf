@@ -24,3 +24,11 @@ variable "ssh_key" {
 variable "ssh_path" {
   type = string
 }
+
+variable "db_user" {
+  type = string
+}
+
+variable "db_password" {
+  type = string
+}
