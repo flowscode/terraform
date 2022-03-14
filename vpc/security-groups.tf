@@ -45,7 +45,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["81.155.49.115/32"]
+    cidr_blocks      = ["************/32"]
     ipv6_cidr_blocks = []
   }
   egress {
@@ -158,7 +158,7 @@ resource "aws_security_group" "db_sg" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = [aws_subnet.flow-sub-public[0].cidr_block]
+    cidr_blocks = [data.aws_vpc.main.cidr_block]
   }
 
   ingress {
@@ -166,7 +166,7 @@ resource "aws_security_group" "db_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [aws_subnet.flow-sub-public[0].cidr_block]
+    cidr_blocks = [data.aws_vpc.main.cidr_block]
   }
 
   ingress {
