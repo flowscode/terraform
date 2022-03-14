@@ -45,7 +45,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["enter-your-ip-address-here/32"]
+    cidr_blocks      = ["81.155.49.115/32"]
     ipv6_cidr_blocks = []
   }
   egress {
@@ -127,6 +127,46 @@ resource "aws_security_group" "private_sg" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [data.aws_vpc.main.cidr_block]
+  }
+
+  ingress {
+    description      = "icmp from inside vpc"
+    from_port        = -1
+    to_port          = -1
+    protocol         = "icmp"
+    cidr_blocks      = [data.aws_vpc.main.cidr_block]
+    ipv6_cidr_blocks = []
+  }
+
+  egress {
+    description      = "outgoing for everyone"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = []
+  }
+}
+
+resource "aws_security_group" "db_sg" {
+  name        = "db_sg"
+  description = "db flow"
+  vpc_id      = data.aws_vpc.main.id
+
+  ingress {
+    description = "bastion access mysql from bastion subnet"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [aws_subnet.flow-sub-public[0].cidr_block]
+  }
+
+  ingress {
+    description = "bastion access ssh from bastion subnet"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [aws_subnet.flow-sub-public[0].cidr_block]
   }
 
   ingress {
