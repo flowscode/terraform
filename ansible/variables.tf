@@ -10,6 +10,6 @@ variable "region" {
   type = string
 }
 
-variable "ubunto_ami" {
+variable "ubuntu_ami" {
   type = string
 }
