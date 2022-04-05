@@ -1,21 +1,30 @@
-required_providers {
-  aws = {
-    source  = "hashicorp/aws"
-    version = "~> 4.0"
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
   }
-}
 }
 
 provider "aws" {
-profile = "default"
-region = "us-east-1"
+  profile = "default"
+  region = var.region
 }
 
-resource "aws_instance" "my_server" {
+resource "aws_instance" "ansible-control-servers" {
+  ami                    = var.ubunto_ami
+  instance_type          = var.instance_type
+  tags = {
+    Name = "ansible-control"
+  }
+}
+
+resource "aws_instance" "ansible-web-servers" {
   count = length(var.web_servers)
-  ami                    = "ami-0e1d30f2c40c4c701"
+  ami                    = var.ubunto_ami
   instance_type          = var.instance_type
   tags = {
     Name = element(var.web_servers, count.index)
   }
-  }
+}
